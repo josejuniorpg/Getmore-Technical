@@ -297,65 +297,9 @@
 {%- endif -%}
 
 {% javascript %}
-  class StickyHeader extends HTMLElement {
-    constructor() {
-      super();
-    }
-
-    connectedCallback() {
-      this.header = document.querySelector('.section-header');
-      // Determina si el header es transparente verificando si tiene la clase "transparent"
-      this.isTransparent = this.header.classList.contains('transparent');
-      
-      // Lógica original para sticky (no transparente) se puede dejar o ajustar por separado
-      this.headerIsAlwaysSticky = this.getAttribute('data-sticky-type') === 'always' || this.getAttribute('data-sticky-type') === 'reduce-logo-size';
-
-      // Para el header absoluto transparente, usaremos un umbral basado en su altura
-      this.absoluteThreshold = this.header.offsetHeight; 
-      
-      this.currentScrollTop = 0;
-      
-      // Aseguramos que el header tenga una transición suave para la transformación
-      this.header.style.transition = "transform 0.3s ease-in-out";
-
-      this.onScrollHandler = this.onScroll.bind(this);
-      window.addEventListener('scroll', this.onScrollHandler, false);
-    }
-
-    disconnectedCallback() {
-      window.removeEventListener('scroll', this.onScrollHandler);
-    }
-
-    onScroll() {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      
-      if (this.isTransparent) {
-        // Para el header transparente y absoluto:
-        // Si estamos scrolleando hacia abajo y hemos pasado el umbral, lo ocultamos
-        if (scrollTop > this.absoluteThreshold && scrollTop > this.currentScrollTop) {
-          this.header.style.transform = "translateY(-100%)";
-        } else {
-          // Si subimos o no hemos pasado el umbral, mostramos el header
-          this.header.style.transform = "translateY(0)";
-        }
-      } else {
-        // Lógica existente para headers no transparentes
-        if (scrollTop > this.currentScrollTop && scrollTop > this.header.offsetHeight) {
-          this.header.classList.add('shopify-section-header-hidden', 'shopify-section-header-sticky');
-        } else {
-          this.header.classList.remove('shopify-section-header-hidden', 'shopify-section-header-sticky', 'animate');
-        }
-      }
-
-      this.currentScrollTop = scrollTop;
-    }
-  }
-
-  customElements.define('sticky-header', StickyHeader);
-
     (function() {
     // Selecciona el header transparente; ajusta el selector según tus clases.
-    var header = document.querySelector('.section-header.transparent');
+    var header = document.querySelector('.section-header');
     if (!header) return;
     
     var lastScrollY = window.scrollY || 0;
