@@ -88,7 +88,7 @@
     position: absolute;
     width: 100vw;
     transition: transform 0.3s ease-in-out;
-    z-index: 50; 
+    z-index: 50;
   }
 
   @media screen and (min-width: 750px) {
@@ -115,8 +115,6 @@
   endfor
 -%}
 
-
-
 <{% if section.settings.sticky_header_type != 'none' %}sticky-header data-sticky-type="{{ section.settings.sticky_header_type }}"{% else %}div{% endif %} class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}">
   {%- liquid
     assign social_links = false
@@ -130,7 +128,6 @@
       assign localization_forms = true
     endif
   -%}
-
 <header class="header {% if section.settings.header_style == 'transparent' %}transparent{% endif %} header--{{ section.settings.logo_position }} header--mobile-{{ section.settings.mobile_logo_position }} page-width{% if section.settings.menu_type_desktop == 'drawer' %} drawer-menu{% endif %}{% if section.settings.menu != blank %} header--has-menu{% endif %}{% if has_app_block %} header--has-app{% endif %}{% if social_links %} header--has-social{% endif %}{% if shop.customer_accounts_enabled %} header--has-account{% endif %}{% if localization_forms %} header--has-localizations{% endif %}">
     {%- liquid
       if section.settings.menu != blank
@@ -141,6 +138,7 @@
         render 'header-search', input_id: 'Search-In-Modal-1'
       endif
     -%}
+
     {%- if section.settings.logo_position != 'middle-center' -%}
       {%- if request.page_type == 'index' -%}
         <h1 class="header__heading">
@@ -435,51 +433,47 @@
 
 <script>
   (function() {
-    // Seleccionar el header
+    // Select the header
     const header = document.querySelector('header');
     if (!header) {
-      console.warn("No se encontró el header.");
+      console.warn("No header found. Exiting script.");
       return;
     }
 
-    // Obtener los valores desde Liquid
+    // Obtaining the header style and sticky header type
     const headerStyle = "{{ section.settings.header_style }}";
     const stickyHeaderType = "{{ section.settings.sticky_header_type }}";
 
-    console.log("Header Style:", headerStyle);
-    console.log("Sticky Header Type:", stickyHeaderType);
-
-    // Validar que el header sea transparente antes de ejecutar el código
+    // Validate if the header is transparent, if not don't do anything
     if (headerStyle !== "transparent") {
-      console.log("El header no es transparente. No se ejecutará la animación.");
       return;
     }
 
-    // Si el sticky_header_type es "always", hacer que el header sea fijo y salir
+    // If the sticky header is always, set the header to fixed
     if (stickyHeaderType === "always") {
       header.style.position = "fixed";
       header.style.top = "0";
       header.style.width = "100vw";
       header.style.transform = "translateY(0)";
-      header.style.transition = "none"; // No necesita animación
+      header.style.transition = "none";
       return;
     }
 
-    var lastScrollY = window.scrollY || 0;
+    let lastScrollY = window.scrollY || 0;
 
     function handleScroll() {
-      var currentScrollY = window.scrollY || 0;
+      let currentScrollY = window.scrollY || 0;
 
       if (stickyHeaderType === "on-scroll-up") {
-        // Si el usuario baja, ocultar el header
+        // If the user scrolls down, hide the header
         if (currentScrollY > lastScrollY) {
           header.style.transform = "translateY(-100%)";
         } else {
-          // Si sube, mostrar el header
+          // If the user scrolls up, show the header
           header.style.transform = "translateY(0)";
         }
       } else if (stickyHeaderType === "reduce-logo-size") {
-        // Lógica adicional si el sticky header reduce el logo
+        // Add a class to reduce the logo size when the user scrolls down
         if (currentScrollY > 50) {
           header.classList.add("small-logo");
         } else {
@@ -492,7 +486,7 @@
 
     window.addEventListener("scroll", handleScroll);
 
-    // Limpiar el evento al salir de la página
+    // Remove the event listener when the page is unloaded
     window.addEventListener("unload", function() {
       window.removeEventListener("scroll", handleScroll);
     });
@@ -500,7 +494,7 @@
 </script>
 
 
-  
+
 {%- if request.page_type == 'index' -%}
   {% assign potential_action_target = request.origin | append: routes.search_url | append: "?q={search_term_string}" %}
   <script type="application/ld+json">
