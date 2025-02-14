@@ -82,6 +82,15 @@
     margin-bottom: {{ section.settings.margin_bottom | times: 0.75 | round: 0 }}px;
   }
 
+  .transparent {
+    max-width: 100vw !important;
+    background-color: transparent;
+    position: absolute;
+    width: 100vw;
+    transition: transform 0.3s ease-in-out;
+    z-index: 50;
+  }
+
   @media screen and (min-width: 750px) {
     .section-header {
       margin-bottom: {{ section.settings.margin_bottom }}px;
@@ -119,7 +128,7 @@
       assign localization_forms = true
     endif
   -%}
-  <header class="header header--{{ section.settings.logo_position }} header--mobile-{{ section.settings.mobile_logo_position }} page-width{% if section.settings.menu_type_desktop == 'drawer' %} drawer-menu{% endif %}{% if section.settings.menu != blank %} header--has-menu{% endif %}{% if has_app_block %} header--has-app{% endif %}{% if social_links %} header--has-social{% endif %}{% if shop.customer_accounts_enabled %} header--has-account{% endif %}{% if localization_forms %} header--has-localizations{% endif %}">
+<header class="header {% if section.settings.header_style == 'transparent' %}transparent{% endif %} header--{{ section.settings.logo_position }} header--mobile-{{ section.settings.mobile_logo_position }} page-width{% if section.settings.menu_type_desktop == 'drawer' %} drawer-menu{% endif %}{% if section.settings.menu != blank %} header--has-menu{% endif %}{% if has_app_block %} header--has-app{% endif %}{% if social_links %} header--has-social{% endif %}{% if shop.customer_accounts_enabled %} header--has-account{% endif %}{% if localization_forms %} header--has-localizations{% endif %}">
     {%- liquid
       if section.settings.menu != blank
         render 'header-drawer'
@@ -286,6 +295,7 @@
   {%- render 'cart-notification', color_scheme: section.settings.color_scheme, desktop_menu_type: section.settings.menu_type_desktop -%}
 {%- endif -%}
 
+
 {% javascript %}
   class StickyHeader extends HTMLElement {
     constructor() {
@@ -421,6 +431,70 @@
   }
 </script>
 
+<script>
+  (function() {
+    // Select the header
+    const header = document.querySelector('header');
+    if (!header) {
+      console.warn("No header found. Exiting script.");
+      return;
+    }
+
+    // Obtaining the header style and sticky header type
+    const headerStyle = "{{ section.settings.header_style }}";
+    const stickyHeaderType = "{{ section.settings.sticky_header_type }}";
+
+    // Validate if the header is transparent, if not don't do anything
+    if (headerStyle !== "transparent") {
+      return;
+    }
+
+    // If the sticky header is always, set the header to fixed
+    if (stickyHeaderType === "always") {
+      header.style.position = "fixed";
+      header.style.top = "0";
+      header.style.width = "100vw";
+      header.style.transform = "translateY(0)";
+      header.style.transition = "none";
+      return;
+    }
+
+    let lastScrollY = window.scrollY || 0;
+
+    function handleScroll() {
+      let currentScrollY = window.scrollY || 0;
+
+      if (stickyHeaderType === "on-scroll-up") {
+        // If the user scrolls down, hide the header
+        if (currentScrollY > lastScrollY) {
+          header.style.transform = "translateY(-100%)";
+        } else {
+          // If the user scrolls up, show the header
+          header.style.transform = "translateY(0)";
+        }
+      } else if (stickyHeaderType === "reduce-logo-size") {
+        // Add a class to reduce the logo size when the user scrolls down
+        if (currentScrollY > 50) {
+          header.classList.add("small-logo");
+        } else {
+          header.classList.remove("small-logo");
+        }
+      }
+
+      lastScrollY = currentScrollY;
+    }
+
+    window.addEventListener("scroll", handleScroll);
+
+    // Remove the event listener when the page is unloaded
+    window.addEventListener("unload", function() {
+      window.removeEventListener("scroll", handleScroll);
+    });
+  })();
+</script>
+
+
+
 {%- if request.page_type == 'index' -%}
   {% assign potential_action_target = request.origin | append: routes.search_url | append: "?q={search_term_string}" %}
   <script type="application/ld+json">
@@ -444,6 +518,22 @@
   "class": "section-header",
   "max_blocks": 3,
   "settings": [
+    {
+      "type": "select",
+      "id": "header_style",
+      "label": "Estilo de Header",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "transparent",
+          "label": "Transparent"
+        }
+      ],
+      "default": "default"
+    },
     {
       "type": "select",
       "id": "logo_position",
