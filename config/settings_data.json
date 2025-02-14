@@ -196,28 +196,6 @@
           "secondary_button_label": "#ffffff",
           "shadow": "#121212"
         }
-      },
-      "scheme-1c69415e-5716-4711-b82f-a6d8ed838bb7": {
-        "settings": {
-          "background": "#ffffff",
-          "background_gradient": "",
-          "text": "#121212",
-          "button": "#121212",
-          "button_label": "#ffffff",
-          "secondary_button_label": "#121212",
-          "shadow": "#121212"
-        }
-      },
-      "scheme-b171b7f5-e22b-4d90-90dd-1e0d7a39cebd": {
-        "settings": {
-          "background": "#ffffff",
-          "background_gradient": "",
-          "text": "#121212",
-          "button": "#121212",
-          "button_label": "#ffffff",
-          "secondary_button_label": "#121212",
-          "shadow": "#121212"
-        }
       }
     }
   },
