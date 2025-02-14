@@ -14,7 +14,7 @@
     "header": {
       "type": "header",
       "custom_css": [
-        ".cart-icon-bubble {display: none;}",
+        "#cart-icon-bubble {display: none;}",
         ".header__icon--search {display: none;}"
       ],
       "settings": {
