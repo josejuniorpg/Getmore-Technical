@@ -138,7 +138,7 @@
         render 'header-search', input_id: 'Search-In-Modal-1'
       endif
     -%}
-
+    <h1> Header Style {{ settings.header_style }}</h1>
     {%- if section.settings.logo_position != 'middle-center' -%}
       {%- if request.page_type == 'index' -%}
         <h1 class="header__heading">
