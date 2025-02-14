@@ -412,7 +412,7 @@
   (function() {
     // Selecciona el header transparente; ajusta el selector según tus clases.
     let header = document.querySelector('header.transparent');
-    let stickyType = this.headerIsAlwaysSticky;
+    let stickyType = this.getAttribute('data-sticky-type');
     
     console.log('StickyType',stickyType)
 
