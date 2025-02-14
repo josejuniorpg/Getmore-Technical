@@ -303,118 +303,57 @@
     }
 
     connectedCallback() {
-      // Selecciona el header (en ambos casos debe tener la clase "section-header")
       this.header = document.querySelector('.section-header');
+      // Determina si el header es transparente verificando si tiene la clase "transparent"
+      this.isTransparent = this.header.classList.contains('transparent');
+      
+      // Lógica original para sticky (no transparente) se puede dejar o ajustar por separado
       this.headerIsAlwaysSticky = this.getAttribute('data-sticky-type') === 'always' || this.getAttribute('data-sticky-type') === 'reduce-logo-size';
-      this.headerBounds = {};
 
-      this.setHeaderHeight();
-      window.matchMedia('(max-width: 990px)').addEventListener('change', this.setHeaderHeight.bind(this));
-
-      if (this.headerIsAlwaysSticky) {
-        this.header.classList.add('shopify-section-header-sticky');
-      }
-
+      // Para el header absoluto transparente, usaremos un umbral basado en su altura
+      this.absoluteThreshold = this.header.offsetHeight; 
+      
       this.currentScrollTop = 0;
-      this.preventReveal = false;
-      this.predictiveSearch = this.querySelector('predictive-search');
+      
+      // Aseguramos que el header tenga una transición suave para la transformación
+      this.header.style.transition = "transform 0.3s ease-in-out";
 
       this.onScrollHandler = this.onScroll.bind(this);
-      this.hideHeaderOnScrollUp = () => this.preventReveal = true;
-
-      this.addEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp);
       window.addEventListener('scroll', this.onScrollHandler, false);
-
-      this.createObserver();
-    }
-
-    setHeaderHeight() {
-      document.documentElement.style.setProperty('--header-height', `${this.header.offsetHeight}px`);
     }
 
     disconnectedCallback() {
-      this.removeEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp);
       window.removeEventListener('scroll', this.onScrollHandler);
-    }
-
-    createObserver() {
-      let observer = new IntersectionObserver((entries, observer) => {
-        this.headerBounds = entries[0].intersectionRect;
-        observer.disconnect();
-      });
-      observer.observe(this.header);
     }
 
     onScroll() {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-      if (this.predictiveSearch && this.predictiveSearch.isOpen) return;
-
-      if (scrollTop > this.currentScrollTop && scrollTop > this.headerBounds.bottom) {
-        requestAnimationFrame(this.hide.bind(this));
-      } else if (scrollTop < this.currentScrollTop && scrollTop > this.headerBounds.bottom) {
-        if (!this.preventReveal) {
-          requestAnimationFrame(this.reveal.bind(this));
+      
+      if (this.isTransparent) {
+        // Para el header transparente y absoluto:
+        // Si estamos scrolleando hacia abajo y hemos pasado el umbral, lo ocultamos
+        if (scrollTop > this.absoluteThreshold && scrollTop > this.currentScrollTop) {
+          this.header.style.transform = "translateY(-100%)";
         } else {
-          window.clearTimeout(this.isScrolling);
-          this.isScrolling = setTimeout(() => {
-            this.preventReveal = false;
-          }, 66);
-          requestAnimationFrame(this.hide.bind(this));
+          // Si subimos o no hemos pasado el umbral, mostramos el header
+          this.header.style.transform = "translateY(0)";
         }
-      } else if (scrollTop <= this.headerBounds.top) {
-        requestAnimationFrame(this.reset.bind(this));
+      } else {
+        // Lógica existente para headers no transparentes
+        if (scrollTop > this.currentScrollTop && scrollTop > this.header.offsetHeight) {
+          this.header.classList.add('shopify-section-header-hidden', 'shopify-section-header-sticky');
+        } else {
+          this.header.classList.remove('shopify-section-header-hidden', 'shopify-section-header-sticky', 'animate');
+        }
       }
 
       this.currentScrollTop = scrollTop;
-    }
-
-    hide() {
-      if (this.headerIsAlwaysSticky) return;
-      // Si el header es transparente, se usa transform
-      if (this.header.classList.contains('transparent')) {
-        this.header.style.transform = "translateY(-100%)";
-        this.header.style.transition = "transform 0.3s ease-in-out";
-      } else {
-        this.header.classList.add('shopify-section-header-hidden', 'shopify-section-header-sticky');
-        this.closeMenuDisclosure();
-        this.closeSearchModal();
-      }
-    }
-
-    reveal() {
-      if (this.headerIsAlwaysSticky) return;
-      if (this.header.classList.contains('transparent')) {
-        this.header.style.transform = "translateY(0)";
-        this.header.style.transition = "transform 0.3s ease-in-out";
-      } else {
-        this.header.classList.add('shopify-section-header-sticky', 'animate');
-        this.header.classList.remove('shopify-section-header-hidden');
-      }
-    }
-
-    reset() {
-      if (this.headerIsAlwaysSticky) return;
-      if (this.header.classList.contains('transparent')) {
-        this.header.style.transform = "translateY(0)";
-      } else {
-        this.header.classList.remove('shopify-section-header-hidden', 'shopify-section-header-sticky', 'animate');
-      }
-    }
-
-    closeMenuDisclosure() {
-      this.disclosures = this.disclosures || this.header.querySelectorAll('header-menu');
-      this.disclosures.forEach(disclosure => disclosure.close());
-    }
-
-    closeSearchModal() {
-      this.searchModal = this.searchModal || this.header.querySelector('details-modal');
-      this.searchModal.close(false);
     }
   }
 
   customElements.define('sticky-header', StickyHeader);
 {% endjavascript %}
+
 
 
 <script type="application/ld+json">
