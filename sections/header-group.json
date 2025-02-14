@@ -18,6 +18,7 @@
         ".header__icon--search {display: none;}"
       ],
       "settings": {
+        "header_style": "transparent",
         "logo_position": "middle-left",
         "menu": "main-menu",
         "menu_type_desktop": "dropdown",
