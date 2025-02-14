@@ -412,6 +412,13 @@
   (function() {
     // Selecciona el header transparente; ajusta el selector según tus clases.
     var header = document.querySelector('header.transparent');
+    const  stickyType = header.getAttribute('data-sticky-type');
+
+    // Si el header es del tipo "always", se queda siempre visible
+    if (stickyType === 'always') {
+      header.style.transform = 'translateY(0)';
+      return;
+    }
     if (!header) return;
     
     var lastScrollY = window.scrollY || 0;
