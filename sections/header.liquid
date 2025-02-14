@@ -416,6 +416,35 @@
   }
 
   customElements.define('sticky-header', StickyHeader);
+
+  (function() {
+    // Selecciona el header transparente; ajusta el selector según tus clases.
+    var header = document.querySelector('.section-header.transparent');
+    if (!header) return;
+    
+    var lastScrollY = window.scrollY || 0;
+    
+    function handleScroll() {
+      var currentScrollY = window.scrollY || 0;
+      
+      // Si se baja, ocultar el header
+      if (currentScrollY > lastScrollY) {
+        header.style.transform = 'translateY(-100%)';
+      } else {
+        // Si se sube, mostrar el header
+        header.style.transform = 'translateY(0)';
+      }
+      
+      lastScrollY = currentScrollY;
+    }
+    
+    window.addEventListener('scroll', handleScroll);
+    
+    // Opcional: remover el listener al descargar la página
+    window.addEventListener('unload', function() {
+      window.removeEventListener('scroll', handleScroll);
+    });
+  })();
 {% endjavascript %}
 
 <script type="application/ld+json">
