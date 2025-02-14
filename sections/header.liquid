@@ -106,6 +106,15 @@
   endfor
 -%}
 
+  <style>
+    .section-header .transparent{
+      max-width: 100vw !important;
+      background-color: transparent;
+      position: absolute;
+      width: 100vw;
+    }
+  </style>
+
 <{% if section.settings.sticky_header_type != 'none' %}sticky-header data-sticky-type="{{ section.settings.sticky_header_type }}"{% else %}div{% endif %} class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}">
   {%- liquid
     assign social_links = false
@@ -119,14 +128,7 @@
       assign localization_forms = true
     endif
   -%}
-  <style>
-    .section-header .transparent{
-      max-width: 100vw !important;
-      background-color: transparent;
-      position: absolute;
-      width: 100vw;
-    }
-  </style>
+
 
   <header class="header {% if settings.header_style == 'transparent' %} transparent{% endif %} header--{{ section.settings.logo_position }} header--mobile-{{ section.settings.mobile_logo_position }} page-width{% if section.settings.menu_type_desktop == 'drawer' %} drawer-menu{% endif %}{% if section.settings.menu != blank %} header--has-menu{% endif %}{% if has_app_block %} header--has-app{% endif %}{% if social_links %} header--has-social{% endif %}{% if shop.customer_accounts_enabled %} header--has-account{% endif %}{% if localization_forms %} header--has-localizations{% endif %}">
     {%- liquid
