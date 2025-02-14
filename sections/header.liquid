@@ -434,10 +434,10 @@
 </script>
 
 <script>
+  if()
     (function() {
-    let header = document.querySelector('header.transparent');
-  var stickyHeaderType = '{{ section.settings.sticky_header_type }}';
-    console.log('Stycli', stickyHeaderType)
+    const header = document.querySelector('header.transparent');
+    const stickyHeaderType = '{{ section.settings.sticky_header_type }}';
     if (!header) return;
     
     var lastScrollY = window.scrollY || 0;
