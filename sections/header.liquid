@@ -434,40 +434,71 @@
 </script>
 
 <script>
-    (function() {
-    const header = document.querySelector('header.transparent');
-    const stickyHeaderType = '{{ section.settings.sticky_header_type }}';
-      
-    if (!header) return;
-    if (stickyHeaderType){
-      header.style.transform = 'translateY(0)';
+  (function() {
+    // Seleccionar el header
+    const header = document.querySelector('header');
+    if (!header) {
+      console.warn("No se encontró el header.");
       return;
     }
-    
+
+    // Obtener los valores desde Liquid
+    const headerStyle = "{{ section.settings.header_style }}";
+    const stickyHeaderType = "{{ section.settings.sticky_header_type }}";
+
+    console.log("Header Style:", headerStyle);
+    console.log("Sticky Header Type:", stickyHeaderType);
+
+    // Validar que el header sea transparente antes de ejecutar el código
+    if (headerStyle !== "transparent") {
+      console.log("El header no es transparente. No se ejecutará la animación.");
+      return;
+    }
+
+    // Si el sticky_header_type es "always", hacer que el header sea fijo y salir
+    if (stickyHeaderType === "always") {
+      header.style.position = "fixed";
+      header.style.top = "0";
+      header.style.width = "100vw";
+      header.style.transform = "translateY(0)";
+      header.style.transition = "none"; // No necesita animación
+      return;
+    }
+
     var lastScrollY = window.scrollY || 0;
-    
+
     function handleScroll() {
       var currentScrollY = window.scrollY || 0;
-      
-      // Si se baja, ocultar el header
-      if (currentScrollY > lastScrollY) {
-        header.style.transform = 'translateY(-100%)';
-      } else {
-        // Si se sube, mostrar el header
-        header.style.transform = 'translateY(0)';
+
+      if (stickyHeaderType === "on-scroll-up") {
+        // Si el usuario baja, ocultar el header
+        if (currentScrollY > lastScrollY) {
+          header.style.transform = "translateY(-100%)";
+        } else {
+          // Si sube, mostrar el header
+          header.style.transform = "translateY(0)";
+        }
+      } else if (stickyHeaderType === "reduce-logo-size") {
+        // Lógica adicional si el sticky header reduce el logo
+        if (currentScrollY > 50) {
+          header.classList.add("small-logo");
+        } else {
+          header.classList.remove("small-logo");
+        }
       }
-      
+
       lastScrollY = currentScrollY;
     }
-    
-    window.addEventListener('scroll', handleScroll);
-    
-    // Opcional: remover el listener al descargar la página
-    window.addEventListener('unload', function() {
-      window.removeEventListener('scroll', handleScroll);
+
+    window.addEventListener("scroll", handleScroll);
+
+    // Limpiar el evento al salir de la página
+    window.addEventListener("unload", function() {
+      window.removeEventListener("scroll", handleScroll);
     });
   })();
 </script>
+
 
   
 {%- if request.page_type == 'index' -%}
