@@ -410,40 +410,44 @@
   customElements.define('sticky-header', StickyHeader);
 
   (function() {
-    // Selecciona el header transparente; ajusta el selector según tus clases.
-    let header = document.querySelector('header.transparent');
-    let stickyType = header.getAttribute('data-sticky-type');
-    
-    console.log('StickyType',stickyType)
-
-    // Si el header es del tipo "always", se queda siempre visible
-    if (stickyType === 'always') {
-      header.style.transform = 'translateY(0)';
-      return;
-    }
-    if (!header) return;
-    
-    var lastScrollY = window.scrollY || 0;
-    
-    function handleScroll() {
-      var currentScrollY = window.scrollY || 0;
-      
-      // Si se baja, ocultar el header
-      if (currentScrollY > lastScrollY) {
-        header.style.transform = 'translateY(-100%)';
-      } else {
-        // Si se sube, mostrar el header
-        header.style.transform = 'translateY(0)';
+    document.addEventListener('DOMContentLoaded', function() {
+      // Selecciona el header transparente; ajusta el selector según tus clases.
+      let header = document.querySelector('header.transparent') || document.querySelector('sticky-header.transparent');
+      if (!header) {
+        console.warn('No se encontró el header transparente.');
+        return;
       }
       
-      lastScrollY = currentScrollY;
-    }
-    
-    window.addEventListener('scroll', handleScroll);
-    
-    // Opcional: remover el listener al descargar la página
-    window.addEventListener('unload', function() {
-      window.removeEventListener('scroll', handleScroll);
+      let stickyType = header.getAttribute('data-sticky-type');
+      console.log('StickyType', stickyType);
+
+      // Si el header es del tipo "always", se queda siempre visible
+      if (stickyType === 'always') {
+        header.style.transform = 'translateY(0)';
+        return;
+      }
+      
+      let lastScrollY = window.scrollY || 0;
+      
+      function handleScroll() {
+        let currentScrollY = window.scrollY || 0;
+        
+        // Si se baja, ocultar el header; si se sube, mostrarlo.
+        if (currentScrollY > lastScrollY) {
+          header.style.transform = 'translateY(-100%)';
+        } else {
+          header.style.transform = 'translateY(0)';
+        }
+        
+        lastScrollY = currentScrollY;
+      }
+      
+      window.addEventListener('scroll', handleScroll);
+      
+      // Opcional: remover el listener al descargar la página
+      window.addEventListener('unload', function() {
+        window.removeEventListener('scroll', handleScroll);
+      });
     });
   })();
 {% endjavascript %}
