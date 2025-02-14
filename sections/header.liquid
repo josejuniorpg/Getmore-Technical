@@ -434,14 +434,14 @@
 </script>
 
 <script>
-  if()
+  if(){}
     (function() {
     const header = document.querySelector('header.transparent');
     const stickyHeaderType = '{{ section.settings.sticky_header_type }}';
       
     if (!header) return;
     if (stickyHeaderType){
-      header.style.transform = 'translateY(-100%)';
+      header.style.transform = 'translateY(0)';
       return;
     }
     
